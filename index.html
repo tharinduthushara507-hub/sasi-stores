@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sasi Stores (සසි ස්ටෝර්ස්) | Ruppe, Nildandahinna</title>
+  <style>
+    :root {
+      --primary: #14532d;
+      --primary-light: #16a34a;
+      --accent: #f59e0b;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --danger: #dc2626;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding-bottom: 85px; }
+
+    header {
+      background: linear-gradient(135deg, var(--primary), #1e6b3b);
+      color: #fff;
+      padding: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+    }
+    .header-top {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .brand h1 { font-size: 1.35rem; letter-spacing: 0.3px; }
+    .brand p { font-size: 0.82rem; opacity: 0.92; margin-top: 2px; }
+    .header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: 0.15s ease;
+    }
+    button:hover { opacity: 0.92; transform: translateY(-1px); }
+    .btn-accent { background: var(--accent); color: #111827; }
+    .btn-light { background: rgba(255,255,255,0.16); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+    .btn-primary { background: var(--primary-light); color: #fff; }
+    .btn-dark { background: #1e293b; color: #fff; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-sm { padding: 6px 10px; font-size: 0.8rem; }
+
+    .container { max-width: 1100px; margin: 18px auto; padding: 0 14px; }
+
+    .sync-banner {
+      background: #dcfce7;
+      color: #14532d;
+      border: 1px solid #86efac;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .controls input, .controls select {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.92rem;
+      background: #fff;
+    }
+    .controls input { flex: 1; min-width: 200px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 14px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    .cat-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      background: #f1f5f9;
+      color: #334155;
+      padding: 3px 8px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .item-name { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .item-unit { font-size: 0.82rem; color: var(--muted); margin-bottom: 10px; }
+    .item-price { font-size: 1.12rem; font-weight: 800; color: var(--primary); margin-bottom: 10px; }
+    .out-badge { color: var(--danger); font-weight: 700; font-size: 0.85rem; margin-bottom: 10px; }
+
+    .cart-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--primary);
+      color: #fff;
+      padding: 12px 16px;
+      z-index: 60;
+      box-shadow: 0 -3px 12px rgba(0,0,0,0.15);
+    }
+    .cart-bar-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.55);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+      padding: 14px;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: #fff;
+      border-radius: 14px;
+      width: 100%;
+      max-width: 680px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+    .form-group label { font-size: 0.82rem; font-weight: 600; color: #334155; }
+    .form-group input, .form-group select, .form-group textarea {
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.86rem; }
+    th, td { border-bottom: 1px solid var(--border); padding: 8px 6px; text-align: left; }
+    th { background: #f8fafc; font-weight: 700; }
+    .order-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 10px;
+      background: #f8fafc;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-top">
+      <div class="brand">
+        <h1>🛒 Sasi Stores (සසි ස්ටෝර්ස්)</h1>
+        <p>Ruppe, Nildandahinna • Open: 7:00 AM – 8:30 PM • WhatsApp: 070 151 9332</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-light" onclick="openOrdersModal()">📋 Orders (<span id="orderCount">0</span>)</button>
+        <button class="btn-accent" onclick="openAdminGate()">⚙️ Manage Shop</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="sync-banner">
+      <span id="syncStatusText">⏳ Firebase Cloud Sync සම්බන්ධ වෙමින් පවතී... (sasi-stores-b13df)</span>
+      <span id="totalItemsBadge">0 Items</span>
+    </div>
+
+    <div class="controls">
+      <input type="text" id="searchInput" placeholder="භාණ්ඩ සොයන්න (උදා: සීනි, සහල්, පරිප්පු)..." oninput="renderItems()" />
+      <select id="categoryFilter" onchange="renderItems()">
+        <option value="All">සියලුම වර්ග (All Categories)</option>
+        <option value="Grocery">සිල්ලර බඩු (Grocery)</option>
+        <option value="School">පාසල් උපකරණ (School)</option>
+        <option value="Hardware">හාඩ්වෙයාර් (Hardware)</option>
+        <option value="Clothing & Fancy">ඇඳුම් සහ ෆැන්සි (Clothing & Fancy)</option>
+      </select>
+    </div>
+
+    <div id="itemsGrid" class="grid"></div>
+  </div>
+
+  <div class="cart-bar">
+    <div class="cart-bar-inner">
+      <div>
+        <strong>Cart: <span id="cartQty">0</span> items</strong> •
+        <span>Total: <strong>Rs. <span id="cartTotal">0.00</span></strong></span>
+      </div>
+      <button class="btn-accent" onclick="openCartModal()">View Cart & Order</button>
+    </div>
+  </div>
+
+  <!-- Cart Modal -->
+  <div id="cartModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>🛍️ ඔබේ Cart එක (Order Summary)</h3>
+        <button class="btn-sm btn-dark" onclick="closeModal('cartModal')">✕</button>
+      </div>
+      <div id="cartItemsList"></div>
+      <hr style="margin:14px 0; border:none; border-top:1px solid var(--border);" />
+      <div class="form-grid">
+        <div class="form-group">
+          <label>ඔබේ නම (Name) *</label>
+          <input type="text" id="custName" placeholder="නම ඇතුළත් කරන්න" />
+        </div>
+        <div class="form-group">
+          <label>දුරකථන / WhatsApp අංකය *</label>
+          <input type="text" id="custPhone" placeholder="07X XXX XXXX" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>ලිපිනය / විශේෂ සටහන් (Address / Notes)</label>
+        <input type="text" id="custNote" placeholder="Ruppe / Nildandahinna ලිපිනය හෝ විස්තර" />
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+        <button class="btn-primary" onclick="placeOrder(false)">✅ Place Online Order</button>
+        <button class="btn-accent" onclick="placeOrder(true)">📲 Order via WhatsApp (0701519332)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Orders Modal -->
+  <div id="ordersModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>📋 ලැබුණු ඇණවුම් (Customer Orders)</h3>
+        <button class="btn-sm btn-dark" onclick="closeModal('ordersModal')">✕</button>
+      </div>
+      <div id="ordersList"></div>
+    </div>
+  </div>
+
+  <!-- Admin Modal -->
+  <div id="adminModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>⚙️ Manage Shop (Inventory & Pricing)</h3>
+        <button class="btn-sm btn-dark" onclick="closeModal('adminModal')">✕</button>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>භාණ්ඩයේ නම (Item Name)</label>
+          <input type="text" id="newName" placeholder="උදා: සුදු සීනි 1kg" />
+        </div>
+        <div class="form-group">
+          <label>වර්ගය (Category)</label>
+          <select id="newCategory">
+            <option value="Grocery">Grocery</option>
+            <option value="School">School</option>
+            <option value="Hardware">Hardware</option>
+            <option value="Clothing & Fancy">Clothing & Fancy</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>මිල (Rs.)</label>
+          <input type="number" id="newPrice" placeholder="260" min="0" step="0.01" />
+        </div>
+        <div class="form-group">
+          <label>ප්‍රමාණය / ඒකකය (Unit)</label>
+          <input type="text" id="newUnit" placeholder="1 kg / 1 pc" />
+        </div>
+      </div>
+      <button class="btn-primary" onclick="addNewItem()">➕ Add Item to Live Shop</button>
+
+      <h4 style="margin-top:20px;">📦 දැනට තියෙන භාණ්ඩ සහ මිල ගණන්</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Price (Rs.)</th>
+            <th>Stock</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="adminItemsTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, addDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA86tF9_v5TfVH-Rro5aabsb71zGCyMW7M",
+      authDomain: "sasi-stores-b13df.firebaseapp.com",
+      projectId: "sasi-stores-b13df",
+      storageBucket: "sasi-stores-b13df.firebasestorage.app",
+      messagingSenderId: "1058257062661",
+      appId: "1:1058257062661:web:0e64aab2a00f5aee5a856c",
+      measurementId: "G-400X4JW2W3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    const defaultItems = [
+      { id: "item-1", name: "සම්බා සහල් (Samba Rice)", category: "Grocery", price: 230, unit: "1 kg", inStock: true },
+      { id: "item-2", name: "සුදු සීනි (White Sugar)", category: "Grocery", price: 265, unit: "1 kg", inStock: true },
+      { id: "item-3", name: "මයිසූර් පරිප්පු (Dhal)", category: "Grocery", price: 320, unit: "1 kg", inStock: true },
+      { id: "item-4", name: "CR Book (පිටු 160)", category: "School", price: 380, unit: "1 pc", inStock: true },
+      { id: "item-5", name: "PVC Pipe 1 inch", category: "Hardware", price: 450, unit: "1 length", inStock: true }
+    ];
+
+    let items = [...defaultItems];
+    let orders = [];
+    let cart = {};
+    let isCloudReady = false;
+
+    const itemsCol = collection(db, "sasi_stores_items");
+    const ordersCol = collection(db, "sasi_stores_orders");
+
+    signInAnonymously(auth).catch((err) => {
+      console.error("Auth error:", err);
+      document.getElementById("syncStatusText").textContent = "⚠️ Local Mode (Firebase Auth පරීක්ෂා කරන්න)";
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        isCloudReady = true;
+        document.getElementById("syncStatusText").textContent = "🟢 Live Cloud Sync Active — sasi-stores-b13df";
+
+        onSnapshot(itemsCol, async (snap) => {
+          if (snap.empty) {
+            for (const item of defaultItems) {
+              await setDoc(doc(itemsCol, item.id), item);
+            }
+            return;
+          }
+          items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          renderItems();
+          renderAdminTable();
+        });
+
+        const qOrders = query(ordersCol, orderBy("createdAt", "desc"));
+        onSnapshot(qOrders, (snap) => {
+          orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          document.getElementById("orderCount").textContent = orders.length;
+          renderOrders();
+        });
+      }
+    });
+
+    window.renderItems = function () {
+      const q = document.getElementById("searchInput").value.trim().toLowerCase();
+      const cat = document.getElementById("categoryFilter").value;
+      const grid = document.getElementById("itemsGrid");
+
+      const filtered = items.filter(it => {
+        const matchCat = cat === "All" || it.category === cat;
+        const matchQ = !q || it.name.toLowerCase().includes(q) || (it.category || "").toLowerCase().includes(q);
+        return matchCat && matchQ;
+      });
+
+      document.getElementById("totalItemsBadge").textContent = `${items.length} Items`;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<p style="grid-column:1/-1; color:var(--muted);">ගැළපෙන භාණ්ඩ හමු නොවීය.</p>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(it => `
+        <div class="card">
+          <div>
+            <span class="cat-tag">${it.category || "Grocery"}</span>
+            <div class="item-name">${it.name}</div>
+            <div class="item-unit">${it.unit || "1 pc"}</div>
+          </div>
+          <div>
+            ${it.inStock !== false
+              ? `<div class="item-price">Rs. ${Number(it.price || 0).toFixed(2)}</div>
+                 <button class="btn-primary btn-sm" style="width:100%;" onclick="addToCart('${it.id}')">+ Add to Cart</button>`
+              : `<div class="out-badge">Out of Stock</div>
+                 <button class="btn-sm btn-dark" style="width:100%; opacity:0.5;" disabled>Unavailable</button>`
+            }
+          </div>
+        </div>
+      `).join("");
+    };
+
+    window.addToCart = function (id) {
+      cart[id] = (cart[id] || 0) + 1;
+      updateCartBar();
+    };
+
+    function updateCartBar() {
+      let qty = 0, total = 0;
+      for (const [id, c] of Object.entries(cart)) {
+        const item = items.find(i => i.id === id);
+        if (item && c > 0) {
+          qty += c;
+          total += Number(item.price || 0) * c;
+        }
+      }
+      document.getElementById("cartQty").textContent = qty;
+      document.getElementById("cartTotal").textContent = total.toFixed(2);
+    }
+
+    window.openCartModal = function () {
+      const list = document.getElementById("cartItemsList");
+      const entries = Object.entries(cart).filter(([_, c]) => c > 0);
+      if (entries.length === 0) {
+        list.innerHTML = `<p style="color:var(--muted);">Cart එක හිස්ව ඇත. භාණ්ඩ තෝරන්න.</p>`;
+      } else {
+        let total = 0;
+        list.innerHTML = entries.map(([id, c]) => {
+          const item = items.find(i => i.id === id);
+          if (!item) return "";
+          const sub = Number(item.price || 0) * c;
+          total += sub;
+          return `<div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+            <span><strong>${item.name}</strong> × ${c}</span>
+            <span>Rs. ${sub.toFixed(2)}</span>
+          </div>`;
+        }).join("") + `<div style="text-align:right; font-weight:800; margin-top:8px;">Total: Rs. ${total.toFixed(2)}</div>`;
+      }
+      document.getElementById("cartModal").classList.add("open");
+    };
+
+    window.placeOrder = async function (viaWhatsApp) {
+      const entries = Object.entries(cart).filter(([_, c]) => c > 0);
+      if (entries.length === 0) return alert("කරුණාකර මුලින් භාණ්ඩ Cart එකට එක් කරන්න.");
+      const name = document.getElementById("custName").value.trim();
+      const phone = document.getElementById("custPhone").value.trim();
+      const note = document.getElementById("custNote").value.trim();
+      if (!name || !phone) return alert("කරුණාකර නම සහ දුරකථන අංකය ඇතුළත් කරන්න.");
+
+      let total = 0;
+      const orderLines = [];
+      for (const [id, c] of entries) {
+        const item = items.find(i => i.id === id);
+        if (item) {
+          const sub = Number(item.price || 0) * c;
+          total += sub;
+          orderLines.push(`${item.name} x${c} (Rs.${sub})`);
+        }
+      }
+
+      const orderData = {
+        customerName: name,
+        phone,
+        note,
+        items: orderLines,
+        total,
+        createdAt: Date.now()
+      };
+
+      if (isCloudReady) {
+        await addDoc(ordersCol, orderData);
+      }
+
+      if (viaWhatsApp) {
+        const msg = `*Sasi Stores Order*\nName: ${name}\nPhone: ${phone}\nNote: ${note || "-"}\n\nItems:\n- ${orderLines.join("\n- ")}\n\n*Total: Rs. ${total.toFixed(2)}*`;
+        window.open(`https://wa.me/94701519332?text=${encodeURIComponent(msg)}`, "_blank");
+      } else {
+        alert("ඔබේ ඇණවුම සාර්ථකව යොමු කරන ලදී!");
+      }
+
+      cart = {};
+      updateCartBar();
+      closeModal("cartModal");
+    };
+
+    window.openOrdersModal = function () {
+      renderOrders();
+      document.getElementById("ordersModal").classList.add("open");
+    };
+
+    function renderOrders() {
+      const box = document.getElementById("ordersList");
+      if (orders.length === 0) {
+        box.innerHTML = `<p style="color:var(--muted);">තවම ඇණවුම් ලැබී නැත.</p>`;
+        return;
+      }
+      box.innerHTML = orders.map(o => `
+        <div class="order-card">
+          <div style="display:flex; justify-content:space-between; font-weight:700;">
+            <span>${o.customerName} (${o.phone})</span>
+            <span>Rs. ${Number(o.total || 0).toFixed(2)}</span>
+          </div>
+          <div style="font-size:0.82rem; color:var(--muted); margin:4px 0;">Note: ${o.note || "-"}</div>
+          <div style="font-size:0.86rem;">${(o.items || []).join(", ")}</div>
+        </div>
+      `).join("");
+    }
+
+    window.openAdminGate = function () {
+      const pin = prompt("Admin PIN ඇතුළත් කරන්න:");
+      if (pin === "1234") {
+        renderAdminTable();
+        document.getElementById("adminModal").classList.add("open");
+      } else if (pin !== null) {
+        alert("PIN අංකය වැරදියි!");
+      }
+    };
+
+    window.addNewItem = async function () {
+      const name = document.getElementById("newName").value.trim();
+      const category = document.getElementById("newCategory").value;
+      const price = parseFloat(document.getElementById("newPrice").value);
+      const unit = document.getElementById("newUnit").value.trim() || "1 pc";
+      if (!name || isNaN(price)) return alert("භාණ්ඩයේ නම සහ මිල නිවැරදිව ඇතුළත් කරන්න.");
+
+      const id = "item-" + Date.now();
+      const newItem = { id, name, category, price, unit, inStock: true };
+      if (isCloudReady) {
+        await setDoc(doc(itemsCol, id), newItem);
+      } else {
+        items.push(newItem);
+        renderItems();
+        renderAdminTable();
+      }
+      document.getElementById("newName").value = "";
+      document.getElementById("newPrice").value = "";
+      document.getElementById("newUnit").value = "";
+    };
+
+    window.updatePrice = async function (id, currentPrice) {
+      const val = prompt("නව මිල (Rs.) ඇතුළත් කරන්න:", currentPrice);
+      const num = parseFloat(val);
+      if (val !== null && !isNaN(num)) {
+        if (isCloudReady) {
+          await updateDoc(doc(itemsCol, id), { price: num });
+        } else {
+          const it = items.find(x => x.id === id);
+          if (it) it.price = num;
+          renderItems();
+          renderAdminTable();
+        }
+      }
+    };
+
+    window.toggleStock = async function (id, currentStock) {
+      const nextStock = !(currentStock !== false);
+      if (isCloudReady) {
+        await updateDoc(doc(itemsCol, id), { inStock: nextStock });
+      } else {
+        const it = items.find(x => x.id === id);
+        if (it) it.inStock = nextStock;
+        renderItems();
+        renderAdminTable();
+      }
+    };
+
+    window.deleteItem = async function (id) {
+      if (!confirm("මෙම භාණ්ඩය මකන්නද?")) return;
+      if (isCloudReady) {
+        await deleteDoc(doc(itemsCol, id));
+      } else {
+        items = items.filter(x => x.id !== id);
+        renderItems();
+        renderAdminTable();
+      }
+    };
+
+    function renderAdminTable() {
+      const tbody = document.getElementById("adminItemsTable");
+      tbody.innerHTML = items.map(it => `
+        <tr>
+          <td><strong>${it.name}</strong><br><span style="font-size:0.75rem; color:var(--muted);">${it.unit || ""}</span></td>
+          <td>Rs. ${Number(it.price || 0).toFixed(2)}</td>
+          <td>${it.inStock !== false ? "In Stock" : "Out"}</td>
+          <td style="display:flex; gap:5px; flex-wrap:wrap;">
+            <button class="btn-sm btn-accent" onclick="updatePrice('${it.id}', ${it.price || 0})">Price</button>
+            <button class="btn-sm btn-dark" onclick="toggleStock('${it.id}', ${it.inStock !== false})">Stock</button>
+            <button class="btn-sm btn-danger" onclick="deleteItem('${it.id}')">Del</button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    window.closeModal = function (id) {
+      document.getElementById(id).classList.remove("open");
+    };
+
+    renderItems();
+  </script>
+</body>
+</html>
