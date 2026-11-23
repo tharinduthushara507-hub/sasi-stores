@@ -553,20 +553,29 @@
       const category = document.getElementById("newCategory").value;
       const price = parseFloat(document.getElementById("newPrice").value);
       const unit = document.getElementById("newUnit").value.trim() || "1 pc";
-      if (!name || isNaN(price)) return alert("භාණ්ඩයේ නම සහ මිල නිවැරදිව ඇතුළත් කරන්න.");
+      if (!name || isNaN(price)) {
+        return alert("භාණ්ඩයේ නම සහ මිල (Rs.) නිවැරදිව ඇතුළත් කරන්න.");
+      }
 
       const id = "item-" + Date.now();
       const newItem = { id, name, category, price, unit, inStock: true };
-      if (isCloudReady) {
-        await setDoc(doc(itemsCol, id), newItem);
-      } else {
-        items.push(newItem);
-        renderItems();
-        renderAdminTable();
+
+      try {
+        if (isCloudReady) {
+          await setDoc(doc(itemsCol, id), newItem);
+        } else {
+          items.push(newItem);
+          renderItems();
+          renderAdminTable();
+        }
+        document.getElementById("newName").value = "";
+        document.getElementById("newPrice").value = "";
+        document.getElementById("newUnit").value = "";
+        alert("✅ අලුත් භාණ්ඩය සාර්ථකව එකතු කරන ලදී!");
+      } catch (err) {
+        console.error("Add item error:", err);
+        alert("❌ භාණ්ඩය එකතු කිරීමට නොහැකි විය: " + err.message);
       }
-      document.getElementById("newName").value = "";
-      document.getElementById("newPrice").value = "";
-      document.getElementById("newUnit").value = "";
     };
 
     window.updatePrice = async function (id, currentPrice) {
